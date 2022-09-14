@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: "Include kevincoakley.ansible_role_nvidia_drivers"
+      ansible.builtin.include_role:
+        name: "kevincoakley.ansible_role_nvidia_drivers"
