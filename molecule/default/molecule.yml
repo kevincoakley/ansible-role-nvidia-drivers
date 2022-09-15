@@ -15,8 +15,7 @@ platforms:
     network: kcoakley_network
 provisioner:
   name: ansible
-  # log: false
-  log: true
+  log: false
   options:
     vvv: false
   playbooks:
