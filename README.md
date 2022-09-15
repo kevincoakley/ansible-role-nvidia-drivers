@@ -1,7 +1,9 @@
 ansible-role-nvidia-drivers
 =========
 
-Installs the NVIDIA drivers on a Linux system.
+![](https://github.com/kevincoakley/ansible-role-nvidia-drivers/workflows/Molecule%20Test/badge.svg)
+
+Installs the NVIDIA drivers and libnvidia-container-tools on a Linux system.
 
 Requirements
 ------------
