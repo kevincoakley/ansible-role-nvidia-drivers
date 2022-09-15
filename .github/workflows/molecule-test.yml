@@ -34,7 +34,7 @@ jobs:
         env:
           MOLECULE_IMAGE: "Ubuntu 22.04 LTS x86_64"
           MOLECULE_SSH_USER: ubuntu
-      - name: Test with molecule
+      - name: Test with molecule on RHEL 8
         run: |
           molecule test --all
         env:
