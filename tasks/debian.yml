@@ -1,0 +1,24 @@
+---
+- name: Download the libnvidia-container gpg key
+  ansible.builtin.get_url:
+    url: https://nvidia.github.io/libnvidia-container/gpgkey
+    dest: /tmp/nvidia-gpgkey
+    mode: '0644'
+
+- name: Dearmor the libnvidia-container gpg key
+  ansible.builtin.command:
+    cmd: gpg -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg --dearmor /tmp/nvidia-gpgkey
+    creates: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+
+- name: Add the libnvidia-container repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://nvidia.github.io/libnvidia-container/stable/ubuntu18.04/$(ARCH) /"
+    state: present
+    filename: nvidia-container-toolkit.list
+
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - libnvidia-container-tools
+    state: present

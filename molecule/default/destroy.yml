@@ -4,21 +4,47 @@
   connection: local
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
+  vars:
+    security_group_name: molecule
+    key_pair_name: "key-pair-{{ molecule_yml['platforms'][0]['name'] }}"
   tasks:
-    # Developer must implement.
+    # molecule_instance_config might not be present, therefore ignore errors and default to an empty config
+    - name: Destroy molecule instance(s)
+      os_server:
+        name: "{{ item.instance_id }}"
+        state: absent
+        delete_fip: true
+      register: server
+      loop: "{{ lookup('file', molecule_instance_config, errors='ignore') | default([], true) | from_yaml | flatten(levels=1) }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) deletion to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: os_jobs
+      until: os_jobs.finished
+      retries: 300
+      loop: "{{ server.results | flatten(levels=1) }}"
+
+    - name: Delete security group
+      os_security_group:
+        name: "{{ security_group_name }}"
+        state: absent
+
+    - name: Delete remote key pair
+      os_keypair:
+        name: "{{ key_pair_name }}"
+        state: absent
 
     # Mandatory configuration for Molecule to function.
 
     - name: Populate instance config
-      ansible.builtin.set_fact:
+      set_fact:
         instance_conf: {}
 
     - name: Dump instance config
-      ansible.builtin.copy:
-        content: |
-          # Molecule managed
-
-          {{ instance_conf | to_json | from_json | to_yaml }}
+      copy:
+        content: "{{ instance_conf | to_json | from_json | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
-        mode: 0600
-      when: server.changed | default(false) | bool
+      when: server.changed | bool

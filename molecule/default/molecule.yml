@@ -2,10 +2,26 @@
 dependency:
   name: galaxy
 driver:
-  name: delegated
+  name: openstack
+lint: |
+  set -e
+  yamllint -c molecule/yaml-lint.yml .
+  ansible-lint -c molecule/ansible-lint.yml .
 platforms:
-  - name: instance
+  - name: nvidia-drivers-molecule
+    image: ${MOLECULE_IMAGE:-AlmaLinux 8.5 x86_64}
+    ssh_user: ${MOLECULE_SSH_USER:-almalinux}
+    flavor: g12.large
+    network: kcoakley_network
 provisioner:
   name: ansible
+  # log: false
+  log: true
+  options:
+    vvv: false
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
+scenario:
+  name: default
 verifier:
   name: ansible

@@ -1,2 +1,11 @@
 ---
-# tasks file for ansible-role-nvidia-drivers
+- name: include debian.yml
+  include_tasks: debian.yml
+  when: ansible_os_family == "Debian"
+
+- name: include redhat.yml
+  include_tasks: redhat.yml
+  when: ansible_os_family == "RedHat"
+
+- name: inclued driver.yml
+  include_tasks: driver.yml

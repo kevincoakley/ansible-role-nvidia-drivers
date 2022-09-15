@@ -1,0 +1,42 @@
+---
+- name: Check if /usr/bin/nvidia-smi exists
+  ansible.builtin.stat:
+    path: /usr/bin/nvidia-smi
+  register: nvidia_smi_exists
+
+- name: Download NVIDIA driver
+  ansible.builtin.get_url:
+    url: "{{ nvidia_driver_download_url }}"
+    dest: /tmp/NVIDIA-Linux.run
+    mode: '0755'
+  when: not nvidia_smi_exists.stat.exists
+  retries: 5
+  delay: 5
+
+- name: Install NVIDIA driver
+  ansible.builtin.command:
+    cmd: /tmp/NVIDIA-Linux.run -s
+    creates: /usr/bin/nvidia-smi
+  when: not nvidia_smi_exists.stat.exists
+
+- name: Template for /etc/nvidia/gridd.conf
+  ansible.builtin.template:
+    src: gridd.conf.j2
+    dest: /etc/nvidia/gridd.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: nvidia_license_server_address is defined
+  notify: Restart nvidia-gridd service
+
+- name: Check if nvidia-smi detects the GPU
+  ansible.builtin.command:
+    cmd: /usr/bin/nvidia-smi
+  register: nvidia_smi_output
+  changed_when: false
+  failed_when: false
+
+- name: Reboot the machine if nvidia-smi does not detect the GPU
+  ansible.builtin.reboot:
+    post_reboot_delay: 5
+  when: "'No devices were found' in nvidia_smi_output.stdout"

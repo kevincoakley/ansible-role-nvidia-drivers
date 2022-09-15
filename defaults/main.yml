@@ -1,2 +1,3 @@
 ---
-# defaults file for ansible-role-nvidia-drivers
+nvidia_driver_download_url: None
+# nvidia_license_server_address:

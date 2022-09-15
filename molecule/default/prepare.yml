@@ -1,0 +1,17 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: Update the kernel to the latest version on RedHat systems
+      ansible.builtin.dnf:
+        name: kernel
+        state: latest
+      when: ansible_facts['os_family'] == 'RedHat'
+
+    - name: Reboot the machine after kernel update
+      ansible.builtin.reboot:
+        post_reboot_delay: 5
+      when: ansible_facts['os_family'] == 'RedHat'

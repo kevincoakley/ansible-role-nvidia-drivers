@@ -1,10 +1,16 @@
 ---
-# This is an example playbook to execute Ansible tests.
-
 - name: Verify
   hosts: all
-  gather_facts: false
+  become: true
+
   tasks:
-  - name: Example assertion
-    ansible.builtin.assert:
-      that: true
+    - name: Check if nvidia-smi detects the GPU
+      shell: /usr/bin/nvidia-smi
+      register: nvidia_smi_output
+      changed_when: false
+      failed_when: false
+
+    - name: Fail if GPU not detected
+      fail:
+        msg: "GPU not detected"
+      when: "'No devices were found' in nvidia_smi_output.stdout"

@@ -1,0 +1,25 @@
+---
+- name: Install epel-release
+  ansible.builtin.dnf:
+    name:
+      - epel-release
+    state: present
+
+- name: Added libnvidia-container repo
+  ansible.builtin.yum_repository:
+    name: libnvidia-container
+    description: libnvidia-container
+    baseurl: https://nvidia.github.io/libnvidia-container/stable/centos8/$basearch
+    repo_gpgcheck: true
+    gpgcheck: false
+    enabled: true
+    gpgkey: https://nvidia.github.io/libnvidia-container/gpgkey
+    sslverify: true
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+
+- name: Install required packages
+  ansible.builtin.dnf:
+    name:
+      - '@Development tools'
+      - libnvidia-container-tools
+    state: present
