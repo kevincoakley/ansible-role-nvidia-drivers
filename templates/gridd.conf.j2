@@ -7,7 +7,11 @@
 # Description: Set License Server Address
 # Data type: string
 # Format:  "<address>"
+{% if nvidia_license_server_address is defined %}
 ServerAddress={{ nvidia_license_server_address }}
+{% else %}
+ServerAddress=
+{% endif %}
 
 # Description: Set License Server port number
 # Data type: integer
