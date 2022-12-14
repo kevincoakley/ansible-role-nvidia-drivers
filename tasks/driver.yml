@@ -26,7 +26,17 @@
     owner: root
     group: root
     mode: '0644'
-  when: nvidia_license_server_address is defined
+  when: nvidia_license_server_address is defined or nvidia_client_config_token is defined
+  notify: Restart nvidia-gridd service
+
+- name: Copy the nvidia_client_config_token
+  ansible.builtin.copy:
+    content: "{{ nvidia_client_config_token }}"
+    dest: /etc/nvidia/ClientConfigToken
+    owner: root
+    group: root
+    mode: '0644'
+  when: nvidia_client_config_token is defined
   notify: Restart nvidia-gridd service
 
 - name: Check if nvidia-smi detects the GPU

@@ -5,7 +5,8 @@
 
   vars:
     nvidia_driver_download_url: "{{ lookup('env', 'MOLECULE_DRIVER_DOWNLOAD_URL') }}"
-    nvidia_license_server_address: "{{ lookup('env', 'MOLECULE_LICENSE_SERVER_ADDRESS') }}"
+    nvidia_license_feature_type: 2
+    nvidia_client_config_token: "{{ lookup('env', 'MOLECULE_CLIENT_CONFIG_TOKEN') }}"
 
   roles:
     - role: ansible-role-nvidia-drivers
