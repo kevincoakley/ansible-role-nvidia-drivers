@@ -9,7 +9,7 @@
   ansible.builtin.yum_repository:
     name: libnvidia-container
     description: libnvidia-container
-    baseurl: https://nvidia.github.io/libnvidia-container/stable/centos8/$basearch
+    baseurl: https://nvidia.github.io/libnvidia-container/stable/rpm/$basearch
     repo_gpgcheck: true
     gpgcheck: false
     enabled: true
